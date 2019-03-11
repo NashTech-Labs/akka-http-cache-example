@@ -21,5 +21,7 @@ To avoid expensive computation again and again, akka http supports caching.
 
 # Hit the below URL
 
-``http://localhost:8080/factorial/200000`` // hit the url twice for big number, see the logs for time taken to execute same request
+``http://localhost:8080/factorial/number`` 
+ 
+ Hit the url twice for big number i.e 200000, see the logs for time taken to execute same request
 
