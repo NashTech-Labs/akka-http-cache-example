@@ -6,6 +6,9 @@ scalaVersion := "2.12.8"
 
 libraryDependencies ++= Seq(
 
+  //akka
+  "com.typesafe.akka" %% "akka-actor" % "2.5.12",
+
   //akka-http
   "com.typesafe.akka" %% "akka-http"   % "10.1.1",
 
