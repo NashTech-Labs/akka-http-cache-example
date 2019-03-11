@@ -1,5 +1,6 @@
 import akka.actor.ActorSystem
-import akka.http.caching.scaladsl.Cache
+import akka.event.Logging
+import akka.http.caching.scaladsl.{Cache, CachingSettings}
 import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
@@ -9,6 +10,9 @@ import scala.concurrent.Future
 
 class Factorial(cache: Cache[Long, BigInt])(implicit system: ActorSystem, materializer: ActorMaterializer) {
 
+  lazy val logger = Logging(system, this.getClass)
+  val defaultCachingSettings = CachingSettings(system)
+
   def routes: Route = path("factorial" / LongNumber) { number =>
     val result = time(cache.getOrLoad(number, _ => factorial(number)))
     complete(HttpResponse(StatusCodes.OK, entity = result.toString))
@@ -16,18 +20,19 @@ class Factorial(cache: Cache[Long, BigInt])(implicit system: ActorSystem, materi
 
   private def factorial(number: Long): Future[BigInt] = {
     def fact(number: BigInt, result: BigInt): BigInt = {
-      if(number == 1) result
+      if (number == 1) result
       else
         fact(number - 1, result * number)
     }
+
     Future.successful(fact(number, 1))
   }
 
   private def time[R](block: => R): R = {
     val t0 = System.currentTimeMillis()
-    val result = block    // call-by-name
+    val result = block // call-by-name
     val t1 = System.currentTimeMillis()
-    println("Elapsed time: " + (t1 - t0)/1000 + " secs")
+    logger.info("Elapsed time: " + (t1 - t0) / 1000 + " secs")
     result
   }
 

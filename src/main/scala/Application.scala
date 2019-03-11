@@ -6,7 +6,7 @@ import akka.stream.ActorMaterializer
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
 
-object Main extends App {
+object Application extends App {
 
   implicit val system: ActorSystem = ActorSystem("akka-http-cache")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
