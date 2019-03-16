@@ -11,11 +11,12 @@ import scala.concurrent.Future
 class Factorial(cache: Cache[Long, BigInt])(implicit system: ActorSystem, materializer: ActorMaterializer) {
 
   lazy val logger = Logging(system, this.getClass)
-  val defaultCachingSettings = CachingSettings(system)
+
 
   def routes: Route = path("factorial" / LongNumber) { number =>
     val result = time(cache.getOrLoad(number, _ => factorial(number)))
-    complete(HttpResponse(StatusCodes.OK, entity = result.toString))
+    val response = HttpResponse(StatusCodes.OK, entity = result.toString)
+    complete(response)
   }
 
   private def factorial(number: Long): Future[BigInt] = {
